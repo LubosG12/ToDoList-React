@@ -10,7 +10,8 @@ class App extends Component {
     items:[],
     id: uuid(),
     item: '',
-    editItem: false
+    editItem: false,
+    isEmpty: true
   }
 
   handleChange = (e) => {
@@ -28,9 +29,25 @@ class App extends Component {
   handleDelete = (id) => {
     const filteredItems = this.state.items.filter(item => item.id!== id)
     this.setState({
-      items: filteredItems
+      items: filteredItems,
     });
+    if (filteredItems.length==0){
+      this.setState({
+        isEmpty: true
+      })
+    }
   };
+
+  handleEdit = (id) => {
+    const filteredItems = this.state.items.filter(item => item.id!== id)
+    const selectedItem = this.state.items.find(item => item.id === id)
+    this.setState({
+      items: filteredItems,
+      item: selectedItem.title,
+      editItem: true,
+      id: id
+    })
+  }
 
   handleSubmit = (e) => {
     e.preventDefault();
@@ -44,19 +61,20 @@ class App extends Component {
         item:'',
         items: updatedItems,
         id: uuid(),
-        editItem: false
+        editItem: false,
+        isEmpty: false
       })
     }
   }
 
   render() {
     return(
-      <div className="container">
+      <div className="container bg-light rounded border border-secondary mt-5">
         <div className="row">
           <div className="col-10 mx-auto col-md-8 mt-4">
-          <h3 className="text-capitalize text-center">todo input</h3>
-          <ToDoInput item={this.state.item} handleChange={this.handleChange} handleSubmit={this.handleSubmit}/>
-          <ToDoList items={this.state.items} clearList={this.clearList} handleDelete={this.handleDelete}/>
+          <h3 className="text-capitalize text-center">Item Input</h3>
+          <ToDoInput item={this.state.item} handleChange={this.handleChange} handleSubmit={this.handleSubmit} editItem={this.state.editItem}/>
+          <ToDoList items={this.state.items} clearList={this.clearList} handleDelete={this.handleDelete}  handleEdit={this.handleEdit} isEmpty={this.state.isEmpty}/>
           </div>
         </div>
       </div>
